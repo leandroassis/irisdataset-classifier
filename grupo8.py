@@ -74,4 +74,25 @@ class classifier():
 
 if __name__ == "__main__":
     a = classifier()
-    a.printer()
+    #Questão 1 Parte 1
+    print("Os coeficientes de aproximação afim são: \n")
+    print(a.leastSquares())
+
+    #Questão 1 Parte 2
+
+
+    #Questão 4
+    print("\n")
+    print("A classificação das amostras são:")
+    a.Classifier(5,2.3,3.3,1)
+    a.Classifier(4.6,3.2,1.4,0.2)
+    a.Classifier(5,4.4,1.4,0.2)
+    a.Classifier(6.1,3,4.6,1.4)
+    a.Classifier(5.9,3,5.1,1.8)
+
+
+    
+
+    #separar em dataset para teste e classificação
+    #fazer questao 1 parte 2
+    # implementar algoritmo 1 contra todos
