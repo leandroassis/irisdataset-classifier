@@ -25,19 +25,19 @@ class classifier():
         else:
             for linha in datas:
                 if type(linha) == str:
-                    if linha == "Setosa":
+                    if linha == "Iris-setosa":
                         aux = 0
-                    elif linha == "Versicolor":
+                    elif linha == "Iris-versicolor":
                         aux = 1
                     else:
                         aux = 2
                     array.append([aux])
         return np.array(array)
 
-    def createA(self, sLength, sWidth, pLength, pWidth, bias = False):
+    def createA(self, sLength, sWidth, pLength, pWidth, bias = None):
         matrix = []
         for index in range(len(sLength)):
-            if bias:
+            if bias != None:
                 matrix.append([sLength[index], sWidth[index], pLength[index], pWidth[index], bias])
             else:
                 matrix.append([sLength[index], sWidth[index], pLength[index], pWidth[index]])
@@ -55,25 +55,34 @@ class classifier():
             tests+=1
         return hits,tests
 
-    def isSetosa(self, sLength, sWidth, pLength, pWidth, Species, bias=0):
-        A = self.createA(sLength, sWidth, pLength, pWidth)
+    def isSetosa(self, sLength, sWidth, pLength, pWidth, Species, bias=None):
+        if bias != None:
+            A = self.createA(sLength, sWidth, pLength, pWidth, bias)
+        else:
+            A = self.createA(sLength, sWidth, pLength, pWidth)
         b = self.createB(Species, "Iris-setosa")
         classifierIsSetosa = self.leastSquares(A,b)
         return classifierIsSetosa
 
-    def isVersicolor(self, sLength, sWidth, pLength, pWidth, Species, bias=0):
-        A = self.createA(sLength, sWidth, pLength, pWidth)
+    def isVersicolor(self, sLength, sWidth, pLength, pWidth, Species, bias=None):
+        if bias != None:
+            A = self.createA(sLength, sWidth, pLength, pWidth, bias)
+        else:
+            A = self.createA(sLength, sWidth, pLength, pWidth)
         b = self.createB(Species, "Iris-versicolor")
         classifierIsVersicolor = self.leastSquares(A,b)
         return classifierIsVersicolor
     
-    def isVirginica(self, sLength, sWidth, pLength, pWidth, Species, bias=0):
-        A = self.createA(sLength, sWidth, pLength, pWidth)
+    def isVirginica(self, sLength, sWidth, pLength, pWidth, Species, bias=None):
+        if bias != None:
+            A = self.createA(sLength, sWidth, pLength, pWidth, bias)
+        else:
+            A = self.createA(sLength, sWidth, pLength, pWidth)
         b = self.createB(Species, "Iris-virginica")
         classifierIsVirginica = self.leastSquares(A,b)
         return classifierIsVirginica
 
-    def trainAlgorithm(self, trainDataSet, alternativeAlgorithm = False, bias = 0):
+    def trainAlgorithm(self, trainDataSet, alternativeAlgorithm = False, bias = None):
         train_data = pd.read_csv(trainDataSet)
         sLength = train_data["SepalLengthCm"]
         sWidth = train_data["SepalWidthCm"]
@@ -82,7 +91,7 @@ class classifier():
         Species = train_data["Species"]
 
         if alternativeAlgorithm:
-            if bias:
+            if bias != None:
                 self.setosaClassifiers = self.isSetosa(sLength, sWidth, pLength, pWidth, Species, bias)
                 self.versicolorClassifiers = self.isVersicolor(sLength, sWidth, pLength, pWidth, Species, bias)
                 self.virginicaClassifiers =self.isVirginica(sLength, sWidth, pLength, pWidth, Species, bias)
@@ -91,15 +100,23 @@ class classifier():
                 self.versicolorClassifiers = self.isVersicolor(sLength, sWidth, pLength, pWidth, Species)
                 self.virginicaClassifiers =self.isVirginica(sLength, sWidth, pLength, pWidth, Species)
         else:
-            A = self.createA(sLength, sWidth, pLength, pWidth)
+            if bias == None:
+                A = self.createA(sLength, sWidth, pLength, pWidth)
+            else:
+                A = self.createA(sLength, sWidth, pLength, pWidth, bias)
             b = self.createB(Species)
             self.coefficients = self.leastSquares(A,b)
 
-    def OneVsAllAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet = 0): #Algoritmo de Classificação usando Um Contra Todos
+    def OneVsAllAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet = 0, bias = None): #Algoritmo de Classificação usando Um Contra Todos
         if dataSet == 0:
-            isSetosa = np.array([sLength, sWidth, pLength, pWidth]).dot(self.setosaClassifiers)[0]
-            isVersicolor = np.array([sLength, sWidth, pLength, pWidth]).dot(self.versicolorClassifiers)[0]
-            isVirginica = np.array([sLength, sWidth, pLength, pWidth]).dot(self.virginicaClassifiers)[0]
+            if bias!= None:
+                isSetosa = np.array([sLength, sWidth, pLength, pWidth, bias]).dot(self.setosaClassifiers)[0]
+                isVersicolor = np.array([sLength, sWidth, pLength, pWidth, bias]).dot(self.versicolorClassifiers)[0]
+                isVirginica = np.array([sLength, sWidth, pLength, pWidth, bias]).dot(self.virginicaClassifiers)[0]
+            else:
+                isSetosa = np.array([sLength, sWidth, pLength, pWidth]).dot(self.setosaClassifiers)[0]
+                isVersicolor = np.array([sLength, sWidth, pLength, pWidth]).dot(self.versicolorClassifiers)[0]
+                isVirginica = np.array([sLength, sWidth, pLength, pWidth]).dot(self.virginicaClassifiers)[0]
         
             print("\n\nAs porcentagens são: \n")
             print("Setosa: "+str(round(isSetosa*100,1))+"%")
@@ -125,9 +142,14 @@ class classifier():
             aux2 = 0
             a = 0
             for item in range(len(sLength)):
-                isSetosa = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item]]).dot(self.setosaClassifiers)[0]
-                isVersicolor = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item]]).dot(self.versicolorClassifiers)[0]
-                isVirginica = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item]]).dot(self.virginicaClassifiers)[0]
+                if bias == None:
+                    isSetosa = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item]]).dot(self.setosaClassifiers)[0]
+                    isVersicolor = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item]]).dot(self.versicolorClassifiers)[0]
+                    isVirginica = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item]]).dot(self.virginicaClassifiers)[0]
+                else:
+                    isSetosa = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item], bias]).dot(self.setosaClassifiers)[0]
+                    isVersicolor = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item], bias]).dot(self.versicolorClassifiers)[0]
+                    isVirginica = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item], bias]).dot(self.virginicaClassifiers)[0]
                 
                 highestCoef = self.highest(isSetosa, isVirginica, isVersicolor)
 
@@ -137,19 +159,17 @@ class classifier():
                     response = "Iris-virginica"
                 elif isVersicolor == highestCoef:
                     response = "Iris-versicolor"
-                print(response, Species[item])
-                if response == Species[item]:
-                    a+=1
-                    print("acertou")
-                else:
-                    print("errou")
                 aux1, aux2 = self.Acurrancier(item, response, Species, aux1, aux2)
-            print(a)
             print("Acurácia de "+str(aux1/aux2))
-
-    def classifierAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet = 0):
+        return aux1/aux2
+    
+    def classifierAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet = 0, bias=None):
         if dataSet == 0:
-            flowerClass = np.array([sLength, sWidth, pLength, pWidth]).dot(self.coefficients)
+            if bias != None:
+                flowerClass = np.array([sLength, sWidth, pLength, pWidth,bias]).dot(self.coefficients)
+            else:
+                flowerClass = np.array([sLength, sWidth, pLength, pWidth]).dot(self.coefficients)
+
             if round(flowerClass[0]) <= 0:
                 print("Iris-setosa")
             elif round(flowerClass[0]) == 1:
@@ -162,27 +182,77 @@ class classifier():
             sepalWidth = data["SepalWidthCm"]
             petalLength = data["PetalLengthCm"]
             petalWidth = data["PetalWidthCm"]
+            Species = data["Species"]
 
-            flowerClass = self.createA(sepalLength, sepalWidth, petalLength, petalWidth).dot(self.coefficients)
+            if bias!= None:
+                flowerClass = self.createA(sepalLength, sepalWidth, petalLength, petalWidth, bias).dot(self.coefficients)
+            else: 
+                flowerClass = self.createA(sepalLength, sepalWidth, petalLength, petalWidth).dot(self.coefficients)
             aux1 = 0
             aux2 = 0
             for item in range(len(flowerClass)):
                 if round(flowerClass[item][0]) <= 0:
-                    response = "Setosa"
+                    response = "Iris-setosa"
                 elif round(flowerClass[item][0]) == 1:
-                    response = "Versicolor"
+                    response = "Iris-versicolor"
                 else:
-                    response = "Virginica"
-                #print(response)
-                aux1, aux2 = self.Acurrancier(item, response, aux1, aux2)
+                    response = "Iris-virginica"
+                aux1, aux2 = self.Acurrancier(item, response, Species, aux1, aux2)
             print("Acurácia de "+str(aux1/aux2))
+        return aux1/aux2
+         
+    def SeparatorSetosa(self, dataSet, bias=None):
+        data = pd.read_csv(dataSet)
+        Species = data["Species"]
+        sepalLength = data["SepalLengthCm"].loc[Species=="Iris-setosa"]
+        sepalWidth = data["SepalWidthCm"].loc[Species=="Iris-setosa"]
+        petalLength = data["PetalLengthCm"].loc[Species=="Iris-setosa"]
+        petalWidth = data["PetalWidthCm"].loc[Species=="Iris-setosa"]
+
+        if bias == None:
+            A = self.createA(sepalLength, sepalWidth, petalLength, petalWidth)
+        else:
+            A = self.createA(sepalLength, sepalWidth, petalLength, petalWidth, bias=bias)
+        b = self.createB(Species.loc[Species=="Iris-setosa"])
+        return A, b
+         
+    def SeparatorVersicolor(self, dataSet, bias=None):
+        data = pd.read_csv(dataSet)
+        Species = data["Species"]
+        sepalLength = data["SepalLengthCm"].loc[Species=="Iris-versicolor"]
+        sepalWidth = data["SepalWidthCm"].loc[Species=="Iris-versicolor"]
+        petalLength = data["PetalLengthCm"].loc[Species=="Iris-versicolor"]
+        petalWidth = data["PetalWidthCm"].loc[Species=="Iris-versicolor"]
+
+        if bias == None:
+            A = self.createA(sepalLength, sepalWidth, petalLength, petalWidth)
+        else:
+            A = self.createA(sepalLength, sepalWidth, petalLength, petalWidth, bias=bias)
+        b = self.createB(Species.loc[Species=="Iris-versicolor"])
+        return A, b
+
+    def SeparatorVirginica(self, dataSet, bias=None):
+        data = pd.read_csv(dataSet)
+        Species = data["Species"]
+        sepalLength = data["SepalLengthCm"].loc[Species=="Iris-virginica"]
+        sepalWidth = data["SepalWidthCm"].loc[Species=="Iris-virginica"]
+        petalLength = data["PetalLengthCm"].loc[Species=="Iris-virginica"]
+        petalWidth = data["PetalWidthCm"].loc[Species=="Iris-virginica"]
+
+        if bias == None:
+            A = self.createA(sepalLength, sepalWidth, petalLength, petalWidth)
+        else:
+            A = self.createA(sepalLength, sepalWidth, petalLength, petalWidth, bias=bias)
+        b = self.createB(Species.loc[Species=="Iris-virginica"])
+
+        return A, b
 
 if __name__ == "__main__":
     a = classifier() #iniciando a classe
-    a.trainAlgorithm("dados_08.csv", alternativeAlgorithm=True) #treinando o algoritmo com um dataset selecionado
-    a.OneVsAllAlgorithm(dataSet="dados_08.csv")
-    a.classifierAlgorithm()
-'''
+    #print(a.SeparatorSetosa("dados_08.csv"))
+    print(a.SeparatorVersicolor("dados_08.csv"))
+    print(a.SeparatorVirginica("dados_08.csv"))
+    '''
     #Questão 1 Parte 1
     print("Os coeficientes de aproximação afim são: \n")
     print(a.leastSquares())
