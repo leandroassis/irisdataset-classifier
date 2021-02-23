@@ -55,6 +55,8 @@ class classifier():
             tests+=1
         return hits,tests
 
+    '''
+    Algoritmo OneVsAll utilizando Minimos Quadrados
     def isSetosa(self, sLength, sWidth, pLength, pWidth, Species, bias=None):
         if bias != None:
             A = self.createA(sLength, sWidth, pLength, pWidth, bias)
@@ -146,12 +148,12 @@ class classifier():
                     isSetosa = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item]]).dot(self.setosaClassifiers)[0]
                     isVersicolor = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item]]).dot(self.versicolorClassifiers)[0]
                     isVirginica = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item]]).dot(self.virginicaClassifiers)[0]
-                    '''
-                    print("\nA classificação de cada classificador é: ")
-                    print(str(round(isSetosa*100,2))+"% de chances de ser setosa")
-                    print(str(round(isVersicolor*100,2))+"% de chances de ser versicolor")
-                    print(str(round(isVirginica*100,2))+"% de chances de ser virginica")
-                    '''
+                
+                    #print("\nA classificação de cada classificador é: ")
+                    #print(str(round(isSetosa*100,2))+"% de chances de ser setosa")
+                    #print(str(round(isVersicolor*100,2))+"% de chances de ser versicolor")
+                    #print(str(round(isVirginica*100,2))+"% de chances de ser virginica")
+
                 else:
                     isSetosa = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item], bias]).dot(self.setosaClassifiers)[0]
                     isVersicolor = np.array([sLength[item], sWidth[item], pLength[item], pWidth[item], bias]).dot(self.versicolorClassifiers)[0]
@@ -168,7 +170,8 @@ class classifier():
                 aux1, aux2 = self.Acurrancier(item, response, Species, aux1, aux2)
             print("\nAcurácia do algoritmo é de "+str(aux1/aux2*100)+"%")
             return aux1/aux2
-    
+
+    Algoritmo de Classificação utilizando Step Function
     def classifierAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet = 0, bias=None):
         if dataSet == 0:
             if bias != None:
@@ -207,7 +210,7 @@ class classifier():
                 aux1, aux2 = self.Acurrancier(item, response, Species, aux1, aux2)
             print("Acurácia do algoritmo é de "+str(aux1/aux2*100)+"%")
             return aux1/aux2
-         
+    '''
     def Separator(self, dataSet, flowerType, bias=None):
         data = pd.read_csv(dataSet)
         Species = data["Species"]
@@ -234,9 +237,9 @@ class classifier():
          
     def PLU(self, A, b, bias = False):  
         n = np.shape(A)[0]
+        
         for column in range(len(A[0])):
             L = np.eye(n)
-            P = np.eye(n)
             for line in range(len(A)):
                 if line == column:
                     item_diag = A[line][column]
@@ -263,7 +266,6 @@ class classifier():
                     L[line][column] = -1*(A[line][column]/item_diag)
             A = L.dot(A)
             b = np.linalg.inv(L).dot(b)
-    
         #algoritmo de organização de A
         for lines in range(len(A)):
             for columns in range(len(A[lines])):
@@ -281,153 +283,184 @@ class classifier():
             x3 = (b[2] - A[2][3]*x4)/A[2][2]
             x2 = (b[1] - A[1][3]*x4 - A[1][2]*x3)/A[1][1]
             x1 = (b[0] - A[0][1]*x2 - A[0][2]*x3 - A[0][3]*x4)/A[0][0]
-            coefficients += [x1],[x2],[x3],[x4]
+            coefficients += x1,x2,x3,x4
         else:
             x5 = b[4]/A[4][4]
             x4 = (b[3] - A[3][4]*x5)/A[3][3]
             x3 = (b[2] - A[2][4]*x5 - A[2][3]*x4)/A[2][2]
             x2 = (b[1] - A[1][4]*x5 - A[1][3]*x4 - A[1][2]*x3)/A[2][2]
             x1 = (b[0] - A[0][4]*x5 - A[0][3]*x4 - A[0][2]*x3 - A[0][1]*x2)/A[0][0]
-            coefficients += [x1],[x2],[x3],[x4],[x5]
+            coefficients += x1,x2,x3,x4,x5
         return np.array(coefficients)
 
-    def trainThirdAlgorithm(self, trainDataSet, bias=None):
-        train_data = pd.read_csv(trainDataSet)
-        sLength = train_data["SepalLengthCm"]
-        sWidth = train_data["SepalWidthCm"]
-        pLength = train_data["PetalLengthCm"]
-        pWidth = train_data["PetalWidthCm"]
-        Species = train_data["Species"]
-
+    def trainOneVsAllPLUAlgorithm(self, trainDataSet, bias=None, typeFlower=""):
         if bias == None:
-            A, b = self.PLU(self.createA(sLength, sWidth, pLength, pWidth), self.createB(Species))
+           self.Separator("dados_08.csv", typeFlower)
         else:
-            A, b = self.PLU(self.createA(sLength, sWidth, pLength, pWidth, bias), self.createB(Species))   
+            self.Separator("dados_08.csv", typeFlower, bias)
+        A, b = self.PLU(self.A, self.b)   
         self.coefficients = self.backSubstitution(A,b)
+        return self.coefficients
 
-    def ThirdAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet=0, bias = None):
+    def OneVsAllPLUAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet=0, bias = None):
         if dataSet == 0:
-            print(self.coefficients)
-            if bias != None:
-                flowerClass = np.array([sLength, sWidth, pLength, pWidth,bias]).dot(self.coefficients)
-            else:
-                flowerClass = np.array([sLength, sWidth, pLength, pWidth]).dot(self.coefficients)
-        print(flowerClass)
+            if bias!= None:
+                SetosaClassifiers = a.trainOneVsAllPLUAlgorithm("data_08.csv", bias, typeFlower="Iris-setosa")
+                VersicolorClassifiers = a.trainOneVsAllPLUAlgorithm("data_08.csv", bias, typeFlower="Iris-versicolor")
+                VirginicaClassifiers = a.trainOneVsAllPLUAlgorithm("data_08.csv", bias, typeFlower="Iris-virginica")
+                
+                isSetosa = np.array([sLength, sWidth, pLength, pWidth, bias]).dot(SetosaClassifiers)
+                isVersicolor = np.array([sLength, sWidth, pLength, pWidth, bias]).dot(VersicolorClassifiers)
+                isVirginica = np.array([sLength, sWidth, pLength, pWidth, bias]).dot(VirginicaClassifiers)
+            else: 
+                SetosaClassifiers = a.trainOneVsAllPLUAlgorithm("data_08.csv", typeFlower="Iris-setosa")
+                VersicolorClassifiers = a.trainOneVsAllPLUAlgorithm("data_08.csv", typeFlower="Iris-versicolor")
+                VirginicaClassifiers = a.trainOneVsAllPLUAlgorithm("data_08.csv", typeFlower="Iris-virginica")
+                
+                isSetosa = np.array([sLength, sWidth, pLength, pWidth]).dot(SetosaClassifiers)
+                isVersicolor = np.array([sLength, sWidth, pLength, pWidth]).dot(VersicolorClassifiers)
+                isVirginica = np.array([sLength, sWidth, pLength, pWidth]).dot(VirginicaClassifiers)
 
+            highestCoef = self.highest(isSetosa, isVersicolor, isVirginica)
+            if isSetosa == highestCoef:
+                response = "Iris-setosa"
+            elif isVirginica == highestCoef:
+                response = "Iris-virginica"
+            elif isVersicolor == highestCoef:
+                response = "Iris-versicolor"
+            print("A flor é uma "+response)
+        else:
+            data = pd.read_csv(dataSet)
+            sepalLength = data["SepalLengthCm"]
+            sepalWidth = data["SepalWidthCm"]
+            petalLength = data["PetalLengthCm"]
+            petalWidth = data["PetalWidthCm"]
+            Species = data["Species"]
+
+            if bias!= None:
+                SetosaClassifiers = a.trainOneVsAllPLUAlgorithm("data_08.csv", bias, typeFlower="Iris-setosa")
+                VersicolorClassifiers = a.trainOneVsAllPLUAlgorithm("data_08.csv", bias, typeFlower="Iris-versicolor")
+                VirginicaClassifiers = a.trainOneVsAllPLUAlgorithm("data_08.csv", bias, typeFlower="Iris-virginica")
+            else: 
+                SetosaClassifiers = a.trainOneVsAllPLUAlgorithm("data_08.csv", typeFlower="Iris-setosa")
+                VersicolorClassifiers = a.trainOneVsAllPLUAlgorithm("data_08.csv", typeFlower="Iris-versicolor")
+                VirginicaClassifiers = a.trainOneVsAllPLUAlgorithm("data_08.csv", typeFlower="Iris-virginica")
+            aux1, aux2 = 0, 0
+            for item in range(len(sepalLength)):
+                if bias:
+                    isSetosa = np.array([sepalLength[item], sepalWidth[item], petalLength[item], petalWidth[item], bias]).dot(SetosaClassifiers)
+                    isVersicolor = np.array([sepalLength[item], sepalWidth[item], petalLength[item], petalWidth[item], bias]).dot(VersicolorClassifiers)
+                    isVirginica = np.array([sepalLength[item], sepalWidth[item], petalLength[item], petalWidth[item], bias]).dot(VirginicaClassifiers)
+                else:
+                    isSetosa = np.array([sepalLength[item], sepalWidth[item], petalLength[item], petalWidth[item]]).dot(SetosaClassifiers)
+                    isVersicolor = np.array([sepalLength[item], sepalWidth[item], petalLength[item], petalWidth[item]]).dot(VersicolorClassifiers)
+                    isVirginica = np.array([sepalLength[item], sepalWidth[item], petalLength[item], petalWidth[item]]).dot(VirginicaClassifiers)
+                highestCoef = self.highest(isSetosa, isVersicolor, isVirginica)
+                if isSetosa == highestCoef:
+                    response = "Iris-setosa"
+                elif isVirginica == highestCoef:
+                    response = "Iris-virginica"
+                elif isVersicolor == highestCoef:
+                    response = "Iris-versicolor"
+                aux1, aux2 = self.Acurrancier(item, response, Species, aux1, aux2)
+            print("Acurácia do algoritmo é de "+str(aux1/aux2*100)+"%")
+            return aux1/aux2
+    
+    def reshapeMatrix(self, A, n):
+        new_A = []
+        for line in range(n):
+            aux = 0
+            for column in range(len(A[line])):
+                if A[line][column] == 0:
+                    aux+=1
+            if aux <= len(A[line]):
+                new_A.append(A[line])
+        return np.array(new_A)
+
+    def powerMethod(self, A):
+        print(A)
+        error = 1e-8
+        v = 0
+        lamb = 0
+
+        eigvectors = []
+        eigvalues = []
+        x = []
+        
+        #criação do vetor x 
+        for line in range(np.shape(A)[0]):
+            x.append([1])
+        save_x = x
+        x = np.array(save_x)
+        
+        
+        x = A.dot(x)
+        x = x/np.linalg.norm(x)
+        ''' 
+        for index in range(np.shape(A)[0]):
+            x = save_x
+            while True:
+                x = A.dot(x)
+                x_norm = np.linalg.norm(x)
+                x = x/ x_norm
+                if (abs(lamb - x_norm) <= error):
+                    break
+                else:
+                    lamb = x_norm
+            #removendo erros de aproximação do computador
+            for line in range(len(x)):
+                for column in range(len(x[line])):
+                    if x[line][column]*10000 < 1:
+                        x[line][column] = 0
+            eigvectors.append(x)
+            eigvalues.append(lamb)
+            v = x/np.linalg.norm(x)
+            A = A - lamb*v*v.transpose()
+        '''
+        for index in range(np.shape(A)[0]):
+            print("\n\n\nFOR")
+            while True:
+                v = x
+                x = A.dot(x)
+                x_norm = np.linalg.norm(x)
+                if np.linalg.norm(v-x_norm) > error:
+                    break
+                else:
+                    x = x/ x_norm
+                print(x)
+                print(v)
+            eigvectors.append(v)
+            eigvalues.append(lamb)
+            print(x)
+            x = A.dot(v)
+            print(v)
+            lamb = x[index]/v[index]
+            A = A - lamb*v.dot(v.transpose())
+            #removendo erros de aproximação do computador
+        
+
+        return np.array(eigvalues), eigvectors
+
+    def SpectralDecomposition(self, dataSet, bias= None, typeFlower=""):
+        if bias:
+            self.Separator(dataSet, typeFlower, bias)
+            self.reshapeMatrix(self.A,5)
+            #print(self.powerMethod(self.A))
+        else:
+            self.Separator(dataSet, flowerType=typeFlower)
+            A,b = self.PLU(self.A, self.b)
+            A = self.reshapeMatrix(A, 4)
+            values1, vectors1 = self.powerMethod(A)
+            values, vectors = np.linalg.eig(A)
+            print(values1)
+            print(vectors1)
+            
+            print(vectors)
+            print(values)
 
 if __name__ == "__main__":
     a = classifier()
-    print("\nA classificação das amostras usando PLU (sem bias) são:\n")
-    a.trainThirdAlgorithm("dados_08.csv")
-    #a.ThirdAlgorithm(5,2.3,3.3,1)
-    #Implementar terceiro algoritmo e fazer questao 2
-'''
-    #Questão 1 Parte 1
-    print("1.1)")
-    print("Os coeficientes de aproximação afim com bias são: \n")
-    a.trainAlgorithm("dados_08.csv", bias=1)
-    print(a.coefficients)
-    print("\nSem bias são: \n")
-    a.trainAlgorithm("dados_08.csv")
-    print(a.coefficients)
-
-    #Questão 1 Parte 2
-    print("\n1.2)")
-    print("Os coeficientes da classe Iris-setosa (sem bias) são: \n")
-    a.Separator("dados_08.csv", "Iris-setosa")
-    A,b = a.PLU(a.A, a.b)
-    withoutBiasSetosa = a.backSubstitution(a.A, a.b)
-    print(withoutBiasSetosa)
-
-    print("\nOs coeficientes da classe Iris-setosa (com bias) são: \n")
-    a.Separator("dados_08.csv", "Iris-setosa", bias=1)
-    A,b = a.PLU(a.A, a.b)
-    withBiasSetosa = a.backSubstitution(a.A, a.b)
-    print(withBiasSetosa)
-
-    print("\nOs coeficientes da classe Iris-versicolor (sem bias) são: \n")
-    a.Separator("dados_08.csv", "Iris-versicolor")
-    A,b = a.PLU(a.A, a.b)
-    withoutBiasVersicolor = a.backSubstitution(a.A,a.b)
-    print(withoutBiasVersicolor)
-
-    print("\nOs coeficientes da classe Iris-versicolor (com bias) são: \n")
-    a.Separator("dados_08.csv", "Iris-versicolor", bias=1)
-    A,b = a.PLU(a.A, a.b)
-    withBiasVersicolor = a.backSubstitution(A,b)
-    print(withBiasVersicolor)
-    
-    print("\nOs coeficientes da classe Iris-virginica (sem bias) são: \n")
-    a.Separator("dados_08.csv", "Iris-virginica")
-    A,b = a.PLU(a.A, a.b)
-    withoutBiasVirginica = a.backSubstitution(A,b)
-    print(withoutBiasVirginica)
-
-    print("\nOs coeficientes da classe Iris-virginica (com bias) são: \n")
-    a.Separator("dados_08.csv", "Iris-virginica", bias=1)
-    A,b = a.PLU(a.A, a.b)
-    withBiasVirginica = a.backSubstitution(A,b)
-    print(withBiasVirginica)
-
-    #Questao 2
-
-    #Questão 3
-
-
-    #Questão 4
-    print("\n4)")
-    #Algoritmo 1
-    print("A classificação das amostras utilizando apenas Minimos Quadrados (sem bias) são:\n")
-    a.trainAlgorithm("dados_08.csv")
-    a.classifierAlgorithm(5,2.3,3.3,1)
-    a.classifierAlgorithm(4.6,3.2,1.4,0.2)
-    a.classifierAlgorithm(5,4.4,1.4,0.2)
-    a.classifierAlgorithm(6.1,3,4.6,1.4)
-    a.classifierAlgorithm(5.9,3,5.1,1.8)
-    
-    print("\nTeste com todo o dataset (sem bias) utilizando amostra completa (150 flores)")
-    a.trainAlgorithm("iris2.csv")
-    a.classifierAlgorithm(dataSet="dados_08.csv")
-
-    print("\n")
-    print("A classificação das amostras utilizando apenas Minimos Quadrados (com bias) são: \n")
-    a.trainAlgorithm("dados_08.csv", bias=1)
-    a.classifierAlgorithm(5,2.3,3.3,1,bias=1)
-    a.classifierAlgorithm(4.6,3.2,1.4,0.2,bias=1)
-    a.classifierAlgorithm(5,4.4,1.4,0.2,bias=1)
-    a.classifierAlgorithm(6.1,3,4.6,1.4,bias=1)
-    a.classifierAlgorithm(5.9,3,5.1,1.8,bias=1)
-
-    print("\nTeste com todo o dataset (com bias) utilizando amostra completa (150 flores)")
-    a.trainAlgorithm("iris2.csv", bias=1)
-    a.classifierAlgorithm(dataSet="dados_08.csv",bias=1)
-
-    #Algorito 2
-    print("\n")
-    print("A classificação das amostras utilizando OneVsAll (sem bias) são: \n")
-    a.trainAlgorithm("dados_08.csv", alternativeAlgorithm=True)
-    a.OneVsAllAlgorithm(5,2.3,3.3,1)
-    a.OneVsAllAlgorithm(4.6,3.2,1.4,0.2)
-    a.OneVsAllAlgorithm(5,4.4,1.4,0.2)
-    a.OneVsAllAlgorithm(6.1,3,4.6,1.4)
-    a.OneVsAllAlgorithm(5.9,3,5.1,1.8)
-
-    print("\nTeste com todo o dataset (sem bias) utilizando amostra completa (150 flores)")
-    a.trainAlgorithm("iris2.csv", alternativeAlgorithm=True)
-    a.OneVsAllAlgorithm(dataSet="dados_08.csv")
-
-    print("\n")
-    print("A classificação das amostras utilizando  OneVsAll (com bias) são: \n")
-    a.trainAlgorithm("dados_08.csv", alternativeAlgorithm=True, bias=1)
-    a.OneVsAllAlgorithm(5,2.3,3.3,1,bias=1)
-    a.OneVsAllAlgorithm(4.6,3.2,1.4,0.2,bias=1)
-    a.OneVsAllAlgorithm(5,4.4,1.4,0.2,bias=1)
-    a.OneVsAllAlgorithm(6.1,3,4.6,1.4,bias=1)
-    a.OneVsAllAlgorithm(5.9,3,5.1,1.8,bias=1)
-    
-    print("\nTeste com todo o dataset (com bias) utilizando amostra completa (150 flores)")
-    a.trainAlgorithm("iris2.csv", alternativeAlgorithm=True, bias=1)
-    a.OneVsAllAlgorithm(dataSet="dados_08.csv",bias=1)
-'''
-    #Algoritmo 3
-    
+    #a.SpectralDecomposition("dados_08.csv", typeFlower="Iris-setosa")
+    r = np.array([[2,-1,0], [-1,3,7],[0,7,-2]])
+    print(a.powerMethod(r))
+    print(np.linalg.eig(r))
