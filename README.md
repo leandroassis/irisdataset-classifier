@@ -140,25 +140,25 @@ Escolhi usar a segunda alternativa para realizar todo o projeto pois foi a que o
 ## Funcionamento:
 
 - Questão 1.1:
-- Passo 1: Utiliza a função Separator para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com 1 nas linhas referentes a classe em questão e 0 nas outras linhas.
-- Passo 2: Soluciona o sistema Ax = b utilizando o mínimos quadrados. 
+    - Passo 1: Utiliza a função Separator para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com 1 nas linhas referentes a classe em questão e 0 nas outras linhas.
+    - Passo 2: Soluciona o sistema Ax = b utilizando o mínimos quadrados. 
 
 - Questão 1.2:
-- Passo 1: Utiliza a função Separator para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com 1 nas linhas referentes a classe em questão e 0 nas outras linhas.
-- Passo 2: Calcula a equação normal do sistema (A^T.Ax = A^T.b), ou seja A = A^T.A e b = A^T.b.
-- Passo 3: Utiliza as funções PLU e backsubstitution para resolver o sistema e obter os mesmos coeficientes acima.
-- Passo 4: Repete os passos acima para cada classe com e sem bias(termo independente).
+    - Passo 1: Utiliza a função Separator para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com 1 nas linhas referentes a classe em questão e 0 nas outras linhas.
+    - Passo 2: Calcula a equação normal do sistema (A^T.Ax = A^T.b), ou seja A = A^T.A e b = A^T.b.
+    - Passo 3: Utiliza as funções PLU e backsubstitution para resolver o sistema e obter os mesmos coeficientes acima.
+    - Passo 4: Repete os passos acima para cada classe com e sem bias(termo independente).
 
 - Questão 2:
-- Passo 1: Utiliza a função Separator para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com 1 nas linhas referentes a classe em questão e 0 nas outras linhas.
-- Passo 2: Calcula a equação normal do sistema (A^T.Ax = A^T.b), ou seja A = A^T.A e b = A^T.b.
-- Passo 3: Calcula a decomposição espectral (atualmente utilizando a função do módulo numpy -novidade em breve rs-)
-- Passo 4: Repete os passos acima para cada classe com e sem bias(termo independente).
+    - Passo 1: Utiliza a função Separator para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com 1 nas linhas referentes a classe em questão e 0 nas outras linhas.
+    - Passo 2: Calcula a equação normal do sistema (A^T.Ax = A^T.b), ou seja A = A^T.A e b = A^T.b.
+    - Passo 3: Calcula a decomposição espectral (atualmente utilizando a função do módulo numpy -novidade em breve rs-)
+    - Passo 4: Repete os passos acima para cada classe com e sem bias(termo independente).
 
 - Questão 3:
-- Passo 1: Utiliza a função Separator para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com 1 nas linhas referentes a classe em questão e 0 nas outras linhas.
-- Passo 2: Calcula a equação normal do sistema (A^T.Ax = A^T.b), ou seja A = A^T.A e b = A^T.b.
-- Passo 3: Calcula a decomposição SVD (atualmente utilizando a função do módulo numpy) 
-- Passo 4: Repete os passos acima para cada classe com e sem bias(termo independente).
+    - Passo 1: Utiliza a função Separator para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com 1 nas linhas referentes a classe em questão e 0 nas outras linhas.
+    - Passo 2: Calcula a equação normal do sistema (A^T.Ax = A^T.b), ou seja A = A^T.A e b = A^T.b.
+    - Passo 3: Calcula a decomposição SVD (atualmente utilizando a função do módulo numpy) 
+    - Passo 4: Repete os passos acima para cada classe com e sem bias(termo independente).
 
 - Questão 4:
