@@ -8,9 +8,10 @@ To do desvendar se na 1 é pra fazer seguindo metodologia OneVsAll ou não
 1 nas linhas referentes a Versicolor e 2 nas referentes a Virginica
 
 To do Comentar e refatorar código
+
 To do Fazer apresentação das questões
-To do Criar guia
 To do Classificador apontar casos de indecisão
+
 To do Decomposição SVD
 To do Decomposição Espectral
 '''
@@ -26,17 +27,24 @@ class Iris_Classifier():
             highestValue = c
         return highestValue
 
-    def createB(self, datas, typeFlower=""):
+    def createB(self, datas, typeFlower="", trainerON=False):
         array = []
         if typeFlower != "":
             for linha in datas:
                 if type(linha) == str:
-                    if linha == typeFlower:
-                        aux = 1
+                    if trainerON == True:
+                        if linha == typeFlower:
+                            aux = 1
+                        else:
+                            aux = 0
+                        array.append([aux])
                     else:
-                        aux = 0
-                    array.append([aux])
-        else:
+                        if linha == typeFlower:
+                            aux = 1
+                            array.append([aux])
+                        else:
+                            continue
+        else: #Parte usada unicamente para treinar o algoritmo de classificação Step Function
             for linha in datas:
                 if type(linha) == str:
                     if linha == "Iris-setosa":
@@ -74,7 +82,7 @@ class Iris_Classifier():
             tests+=1
         return hits,tests
 
-    def Separator(self, dataSet, flowerType="", bias=None, altResponse=None):
+    def Separator(self, dataSet, flowerType="", bias=None, altResponse=None, trainerMode = False):
         data = pd.read_csv(dataSet)
         Species = data["Species"]
         sepalLength = data["SepalLengthCm"]
@@ -82,12 +90,25 @@ class Iris_Classifier():
         petalLength = data["PetalLengthCm"]
         petalWidth = data["PetalWidthCm"]
         
-        if altResponse != None:
-            self.b = self.createB(Species)
+        if altResponse == True:
+            self.b = self.createB(Species,trainerON=trainerMode)
+            self.A = self.createA(sepalLength, sepalWidth, petalLength, petalWidth, bias)
+        elif altResponse == False:
+            self.b = self.createB(Species, flowerType,trainerON=trainerMode)
+            self.A = self.createA(sepalLength, sepalWidth, petalLength, petalWidth, bias)
         else:
-            self.b = self.createB(Species, flowerType)
-        self.A = self.createA(sepalLength, sepalWidth, petalLength, petalWidth, bias)
-        
+            self.b = self.createB(Species, flowerType,trainerON=trainerMode)
+            sLength, sWidth, pLength, pWidth = [],[],[],[]
+            for line in range(len(Species)):
+                if Species[line] == flowerType:
+                    sLength.append(sepalLength[line])
+                    sWidth.append(sepalWidth[line])
+                    pLength.append(petalLength[line])
+                    pWidth.append(petalWidth[line])
+                else:
+                    continue
+            self.A = self.createA(sLength, sWidth, pLength, pWidth, bias)        
+
     def PLU(self, A, b, bias = False):  
         n = np.shape(A)[0]
         
@@ -147,7 +168,7 @@ class Iris_Classifier():
         return np.array(coefficients)
 
     def trainAlgorithm(self, trainDataSet, bias=None, typeFlower=""):
-        self.Separator(trainDataSet, typeFlower, bias)
+        self.Separator(trainDataSet, typeFlower, bias, trainerMode=True, altResponse=False)
         '''
         # Utilizar o PLU + backsubstitution para resolver essa operação resultaria em uma perda de precisão devido aos arredondamentos durante o método
         A,b = self.NormalEquation(self.A,self.b)
@@ -215,7 +236,7 @@ class Iris_Classifier():
             return aux1/aux2
 
     def trainStepAlgorithm(self, trainDataSet, bias):
-        self.Separator(trainDataSet, bias=bias, altResponse=True)
+        self.Separator(trainDataSet, bias=bias, altResponse=True, trainerMode=True)
         self.coefficients = self.leastSquares(self.A, self.b) #novamente utilizando mínimos quadrados para não perder eficiência
    
     def StepFunctionAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet=0, bias=None): #Função classificadora utilizando step Function
@@ -318,15 +339,15 @@ def run():
     objct = Iris_Classifier()
 
     dataSet = "dados_08.csv"
+    data = pd.read_csv(dataSet)
     bias = None
+    specie = ""
 
     print("Trabalho Final de Álgebra Linear")
     print("Grupo 8 - Leandro Assis, Paulo Victor Lima, Pedro Alonso, Victor Nunes")
 
     #Questão 1
     print("\nQuestão 1.1: Coeficientes para cada classe usando Mínimos Quadrados\n")
-    data = pd.read_csv(dataSet)
-    specie = ""
     for flower in data["Species"]:
         if specie == flower:
             continue
@@ -349,6 +370,7 @@ def run():
                 A, b = objct.PLU(A,b) #executa o PLU
                 coefficients = objct.backSubstitution(A,b) #Faz o backsubstitution em cima das matrizes A e b resultantes do PLU
                 print("Coeficientes da classe "+flower+".")
+                print(coefficients)
                 print("\n")
                 specie = flower
         if bias != 1:
@@ -356,30 +378,63 @@ def run():
             bias = 1
     bias = None
 
+    #Questão 2
+    print("\nQuestão 2: Decomposição Espectral\n")
+    print("--- Sem bias ---:")
+    for execution in range(2):
+        for flower in data["Species"]:
+            if specie == flower:
+                continue
+            else:
+                objct.Separator(dataSet, flower, bias) #para incluir o bias basta modificar o valor de bias na declaração no top dessa função
+                A,b = objct.NormalEquation(objct.A, objct.b) #discarta-se o B pois o interesse é apenas fazer a decomposição de A
+                print("Decomposição Espectral da matriz A da classe "+flower)
+                print("\nA antes da decomposição: \n")
+                print(A)
+                eigenvalues, eigenvectors = np.linalg.eig(A)
+                print("\nOs autovalores são: (alocados em forma de vetor)\n")
+                print(eigenvalues)
+                print("\nOs autovetores são:\n")
+                print(eigenvectors)
+                eigenvalues = np.diag(eigenvalues)
+                A = eigenvectors.dot(eigenvalues).dot(np.linalg.inv(eigenvectors)) #remonta A
+                print("\nA = PDP^-1, P = autovetores, D = matriz diagonal dos autovalores.\n")
+                print(A)
+                print("\n")
+                specie = flower
+        if bias != 1:
+            print("\n--- Com bias ---:")
+            bias = 1
+    bias = None
 
+    #Questão 3
+
+
+    #Questão 4
     print("\nQuestão 4: Classificando as amostras\n")
     print("OBS: A primeira resposta é referente ao classificador Um contra Todos e a segunda ao Algoritmo com Step Function")
     print("A-)")
-    objct.OneVsAllAlgorithm(5,2.3,3.3,1,bias=1)
-    objct.StepFunctionAlgorithm(5,2.3,3.3,1,bias=1)
+    objct.OneVsAllAlgorithm(5,2.3,3.3,1,bias=bias)
+    objct.StepFunctionAlgorithm(5,2.3,3.3,1,bias=bias)
     print("\nB-)")
-    objct.OneVsAllAlgorithm(4.6,3.2,1.4,0.2,bias=1)
-    objct.StepFunctionAlgorithm(4.6,3.2,1.4,0.2,bias=1)
+    objct.OneVsAllAlgorithm(4.6,3.2,1.4,0.2,bias=bias)
+    objct.StepFunctionAlgorithm(4.6,3.2,1.4,0.2,bias=bias)
     print("\nC-)")
-    objct.OneVsAllAlgorithm(5.0,3.3,1.4,0.2,bias=1)
-    objct.StepFunctionAlgorithm(5.0,3.3,1.4,0.2,bias=1)
+    objct.OneVsAllAlgorithm(5.0,3.3,1.4,0.2,bias=bias)
+    objct.StepFunctionAlgorithm(5.0,3.3,1.4,0.2,bias=bias)
     print("\nD-)")
-    objct.OneVsAllAlgorithm(6.1,3.0,4.6,1.4,bias=1)
-    objct.StepFunctionAlgorithm(6.1,3.0,4.6,1.4,bias=1)
+    objct.OneVsAllAlgorithm(6.1,3.0,4.6,1.4,bias=bias)
+    objct.StepFunctionAlgorithm(6.1,3.0,4.6,1.4,bias=bias)
     print("\nE-)")
     objct.OneVsAllAlgorithm(5.9,3.0,5.1,1.8,bias=1)
-    objct.StepFunctionAlgorithm(5.9,3.0,5.1,1.8,bias=1)
+    objct.StepFunctionAlgorithm(5.9,3.0,5.1,1.8,bias=bias)
 
     print("\nTestes Extra:")
     print("Classificador um contra todos")
-    objct.OneVsAllAlgorithm(dataSet="dados_08.csv", bias=1) #Testando todo o dataset para medir a eficiência do algoritmo
+    objct.OneVsAllAlgorithm(dataSet="dados_08.csv", bias=bias) #Testando todo o dataset para medir a eficiência do algoritmo
     print("\nClassificador StepFunction")
-    objct.StepFunctionAlgorithm(dataSet="dados_08.csv")
+    objct.StepFunctionAlgorithm(dataSet="dados_08.csv", bias=bias)
+
     '''
     As diferenças de acurácia entre os dois algoritmos se dá pela forma de implementação.
     O algoritmo um contra todos dá como classificação a saída que obtiver maior "probabilidade", já o step function apenas realiza uma função degrau para levar o valor para\
