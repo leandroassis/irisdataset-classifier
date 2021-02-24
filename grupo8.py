@@ -2,20 +2,10 @@ import numpy as np
 import pandas as pd
 
 '''
-To do desvendar se na 1 é pra fazer seguindo metodologia OneVsAll ou não 
-## metodologia OneVsAll = para cada classe com e sem bias fazer todo o dataset(A) ser igual a um b que possui valores 1 nas linhas referentes a classe e 0 nas outras (Em Uso)
-## Não usar OneVsAll = para cada classe com e sem bias A tem apenas as linhas do dataset em que a classe é igual a classe em questão e b é uma matriz com -1 nas linhas referentes a Setosa \
-1 nas linhas referentes a Versicolor e 2 nas referentes a Virginica
-
 To do Comentar e refatorar código
-
-To do Fazer apresentação das questões
 To do Classificador apontar casos de indecisão
-
-To do Decomposição SVD
-To do Decomposição Espectral
+To do Fazer Power Method
 '''
-
 class Iris_Classifier():
     def highest(self, a,b,c):
         highestValue = a
@@ -180,7 +170,6 @@ class Iris_Classifier():
     def OneVsAllAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet=0, bias = None):
         self.trainAlgorithm("dados_08.csv", bias, typeFlower="Iris-setosa")
         SetosaClassifiers = self.coefficients
-
         self.trainAlgorithm("dados_08.csv", bias, typeFlower="Iris-versicolor")
         VersicolorClassifiers = self.coefficients
 
@@ -279,49 +268,6 @@ class Iris_Classifier():
             print("Acurácia do algoritmo é de "+str(round(aux1/aux2*100,2))+"%")
             return aux1/aux2
 
-    def powerMethod(self, A):
-        error = 1e-8
-        v = 0
-        lamb = 0
-
-        eigvectors = []
-        eigvalues = []
-        x = []
-        
-        #criação do vetor x 
-        for line in range(np.shape(A)[0]):
-            x.append([1])
-        save_x = x
-        x = np.array(save_x)
-        
-        
-        x = A.dot(x)
-        x = x/np.linalg.norm(x)
-
-        for index in range(np.shape(A)[0]):
-            x = save_x
-            while True:
-                x = A.dot(x)
-                x_norm = np.linalg.norm(x)
-                x = x/ x_norm
-                if (abs(lamb - x_norm) <= error):
-                    break
-                else:
-                    lamb = x_norm
-            #removendo erros de aproximação do computador
-            for line in range(len(x)):
-                for column in range(len(x[line])):
-                    if x[line][column]*10000 < 1:
-                        x[line][column] = 0
-            eigvectors.append(x)
-            eigvalues.append(lamb)
-            #print(eigvectors)
-            #print(eigvalues)
-            v = x/np.linalg.norm(x)
-            A = A - lamb*v*v.transpose()
-
-        return np.array(eigvalues), eigvectors
-
     def SpectralDecomposition(self, dataSet, bias= None, typeFlower=""):
         if bias:
             self.Separator(dataSet, typeFlower, bias)
@@ -352,7 +298,7 @@ def run():
         if specie == flower:
             continue
         else:
-            objct.Separator(dataSet, flower,bias) #para incluir o bias basta modificar o valor de bias na declaração no top dessa função
+            objct.Separator(dataSet, flower,bias, trainerMode=True, altResponse=False) #para incluir o bias basta modificar o valor de bias na declaração no top dessa função
             print("Coeficientes da classe "+flower+".")
             print(objct.leastSquares(objct.A, objct.b))
             print("\n")
@@ -365,7 +311,7 @@ def run():
             if specie == flower:
                 continue
             else:
-                objct.Separator(dataSet, flower,bias) #Separando cada uma das classes
+                objct.Separator(dataSet, flower,bias, trainerMode=True, altResponse=False) #Separando cada uma das classes
                 A,b = objct.NormalEquation(objct.A, objct.b) #Criando equação normal
                 A, b = objct.PLU(A,b) #executa o PLU
                 coefficients = objct.backSubstitution(A,b) #Faz o backsubstitution em cima das matrizes A e b resultantes do PLU
@@ -386,7 +332,7 @@ def run():
             if specie == flower:
                 continue
             else:
-                objct.Separator(dataSet, flower, bias) #para incluir o bias basta modificar o valor de bias na declaração no top dessa função
+                objct.Separator(dataSet, flower, bias, trainerMode=True, altResponse=False) #para incluir o bias basta modificar o valor de bias na declaração no top dessa função
                 A,b = objct.NormalEquation(objct.A, objct.b) #discarta-se o B pois o interesse é apenas fazer a decomposição de A
                 print("Decomposição Espectral da matriz A da classe "+flower)
                 print("\nA antes da decomposição: \n")
@@ -408,7 +354,27 @@ def run():
     bias = None
 
     #Questão 3
-
+    print("\nQuestão 3: Decomposição SVD\n")
+    print("--- Sem bias ---:")
+    for execution in range(2):
+        for flower in data["Species"]:
+            if specie == flower:
+                continue
+            else:
+                objct.Separator(dataSet, flower, bias, trainerMode=True, altResponse=False) #para incluir o bias basta modificar o valor de bias na declaração no top dessa função
+                A,b = objct.NormalEquation(objct.A, objct.b) #discarta-se o B pois o interesse é apenas fazer a decomposição de A
+                print("Decomposição SVD da matriz A da classe "+flower)
+                U,s,V = np.linalg.svd(A)
+                print("A matriz U é ")
+                print(U)
+                print(s)
+                print(V)
+                print("\n")
+                specie = flower
+        if bias != 1:
+            print("\n--- Com bias ---:")
+            bias = 1
+    bias = None
 
     #Questão 4
     print("\nQuestão 4: Classificando as amostras\n")
@@ -443,6 +409,8 @@ def run():
         classificadores apontam uma porcentagem baixa). Caso isso ocorra a maior "porcentagem" será retornada, mas não necessariamente essa é a decisão do algoritmo já que \
             no fundo há uma indecisão. Por outro lado o Step Function apenas leva o valor de saída do classificador para o indicador mais próximo - entre -1,1 e 2 -, funcionando \
                 similarmente a um "chute" bem dado.
+    O conceito de probabilidade descrito acima é o entendimento de cada classificador sobre a posição do ponto passado, ou seja, se está dentro da região característica daquele\
+        classificador ou não.
     '''
 
 if __name__ == "__main__":
