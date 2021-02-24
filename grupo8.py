@@ -268,19 +268,6 @@ class Iris_Classifier():
             print("Acurácia do algoritmo é de "+str(round(aux1/aux2*100,2))+"%")
             return aux1/aux2
 
-    def SpectralDecomposition(self, dataSet, bias= None, typeFlower=""):
-        if bias:
-            self.Separator(dataSet, typeFlower, bias)
-            #print(self.powerMethod(self.A))
-        else:
-            self.Separator(dataSet, flowerType=typeFlower)
-            A,b = self.NormalEquation(self.A, self.b)
-            A = A.transpose().dot(A)
-            values1, vectors1 = self.powerMethod(A)
-            values, vectors = np.linalg.eig(A)
-            print(values1)
-            print(values)
-
 def run():
     objct = Iris_Classifier()
 

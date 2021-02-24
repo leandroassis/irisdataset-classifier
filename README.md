@@ -17,7 +17,7 @@ Existem 3 possibilidades para separação das matrizes para cada classe:
 
 1. Utiliza a função Separator(sem declarar altResponse e trainerMode) para separar o dataset em matrizes A 15x4 (ou 15x5) com os dados referentes à cada classe e b formada por 15 linhas de 1.
 ```
-EX: A para classe irís-setosa       b todos os casos (nessa implementação)
+EX: A para classe irís-setosa       b todos as classes (nessa implementação)
     A = [[5.8 4.  1.2 0.2]          b = [[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1]]
          [5.7 4.4 1.5 0.4]
          [5.4 3.9 1.3 0.4]
@@ -82,7 +82,7 @@ b para Iris-versicolor
          [0]
          [0]
          [0]]
-A para todos os casos
+A para todas as classes (nessa implementação e na posterior)
     A = [[5.8 4.  1.2 0.2]  
          [5.7 4.4 1.5 0.4]
          [5.4 3.9 1.3 0.4]
@@ -129,7 +129,56 @@ A para todos os casos
          [6.1 3.  4.9 1.8]
          [6.4 2.8 5.6 2.1]]
 ```
-3. Utiliza a função Separator(declarando trainerMode e altReponse = True) para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com -1 nas linhas referentes à classe Iris-setosa, 0 nas refernetes à iris-versicolor e 2 nas referentes à iris-virgínica (método utilizado apenas no classificador StepFunction). 
+3. Utiliza a função Separator(declarando trainerMode e altReponse = True) para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com -1 nas linhas referentes à classe Iris-setosa, 0 nas refernetes à iris-versicolor e 2 nas referentes à iris-virgínica (método utilizado apenas no classificador StepFunction).
+```
+Ex:
+b para todas as classes:
+b = [[-1]
+     [-1]
+     [-1]
+     [-1]
+     [-1]
+     [-1]
+     [-1]
+     [-1]
+     [-1]
+     [-1]
+     [-1]
+     [-1]
+     [-1]
+     [-1]
+     [-1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 1]
+     [ 2]
+     [ 2]
+     [ 2]
+     [ 2]
+     [ 2]
+     [ 2]
+     [ 2]
+     [ 2]
+     [ 2]
+     [ 2]
+     [ 2]
+     [ 2]
+     [ 2]
+     [ 2]
+     [ 2]]
+```
 
 Escolhi usar a segunda alternativa para realizar todo o projeto pois foi a que obteve o melhor desempenho.
 
