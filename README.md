@@ -3,9 +3,14 @@
 ## Final work of Linear Algebra II
 
 ### Execução:
-Para obter as respostas de cada pergunta bastar executar:
+Para obter as respostas de cada pergunta basta:
+- Clonar o repositório (requer git instalado "sudo apt-get install git-all"):
 ```
-    pip3 install numpy && pip3 install pandas && python3 grupo8.py
+    git clone https://github.com/leandroassis/irisdataset-classifier.git
+```
+- Executar:
+```
+    pip3 install numpy && pip3 install pandas && clear && python3 grupo8.py
 ```
 ### Objetivos:
 - Calcular os coeficientes de um sistema linear através dos Mínimos Quadrados e PLU+backsubstitution
