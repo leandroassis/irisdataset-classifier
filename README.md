@@ -224,3 +224,100 @@ Esse algoritmo, diferentemente do anterior, não consegue expressar suas incerte
     - Passo 1: Chama as funções de cada algoritmo de classificação, que internamente treinam (geram coeficientes) para serem utilizados na classificação.
     - Passo 2: Resolve o sistema Ax=b, sendo A a matriz com os dados de pétala e sépala passados.
     - Passo 3: Apresenta a classificação.
+
+## Notas:
+
+A separação das matrizes em todo a resolução dos problemas está sendo feita seguindo a forma 2 do tópico "Separação das classes". Por conta disso, como era de se esperar, os autovalores e autovetores, assim como os componentes da decomposição SVD são os mesmos para as 3 classes. Isto se dá pois todas as decomposições estão sendo feitas sobre a mesma matriz A (descrita no item 2 do tópico "Sepração das classes").
+Mantive como padrão essa apresentação para uniformizar a forma de separação para resolução dos problemas 1,2,3 e a forma de separação para treino do classificador que responde a questão 4. Caso entendam que essa separação é insatisfatória pode-se troca-la por qualquer uma das 3 citadas no tópico "Separação das classes" (Entretanto somente trocando pelo método 1 resultaria em diferenças entre os componentes das decomposições para cada classe). É importante salientar que, realizando essa troca para responder as questões 1,2 e 3, os coeficientes obtidos na questão 1 (através do mínimos quadrados e PLU+backsubstitution) não seriam os mesmos que os usados pelos algoritmos de classificação - oneVsAll e StepFunciton - pois ambos usam abordagens diferentes (usam as separações descritas nos itens 2 e 3, respectivamente, do tópico "Separação das classes").
+
+Ex pronto para troca da forma de separação(que vai gerar componentes diferentes para cada classe nas decomposições SVD e Espectral):
+
+```
+    Basta substituir o código das questões 1,2 e 3 no .py pelo código abaixo
+
+    #Questão 1
+    print("\nQuestão 1.1: Coeficientes para cada classe usando Mínimos Quadrados\n")
+    for flower in data["Species"]:
+        if specie == flower:
+            continue
+        else:
+            objct.Separator(dataSet, flower,bias) #para incluir o bias basta modificar o valor de bias na declaração no top dessa função
+            print("Coeficientes da classe "+flower+".")
+            print(objct.leastSquares(objct.A, objct.b))
+            print("\n")
+            specie = flower
+
+    print("\nQuestão 1.2: Coeficientes para cada classe usando PLU + backsubstitution\n")
+    print("--- Sem bias ---:")
+    for execution in range(2):
+        for flower in data["Species"]:
+            if specie == flower:
+                continue
+            else:
+                objct.Separator(dataSet, flower,bias) #Separando cada uma das classes
+                A,b = objct.NormalEquation(objct.A, objct.b) #Criando equação normal
+                A, b = objct.PLU(A,b) #executa o PLU
+                coefficients = objct.backSubstitution(A,b) #Faz o backsubstitution em cima das matrizes A e b resultantes do PLU
+                print("Coeficientes da classe "+flower+".")
+                print(coefficients)
+                print("\n")
+                specie = flower
+        if bias != 1:
+            print("\n--- Com bias ---:")
+            bias = 1
+    bias = None
+
+    #Questão 2
+    print("\nQuestão 2: Decomposição Espectral\n")
+    print("--- Sem bias ---:")
+    for execution in range(2):
+        for flower in data["Species"]:
+            if specie == flower:
+                continue
+            else:
+                objct.Separator(dataSet, flower, bias) 
+                A,b = objct.NormalEquation(objct.A, objct.b) 
+                print("Decomposição Espectral da matriz A da classe "+flower)
+                print("\nA antes da decomposição: \n")
+                print(A)
+                eigenvalues, eigenvectors = np.linalg.eig(A)
+                print("\nOs autovalores são: (alocados em forma de vetor)\n")
+                print(eigenvalues)
+                print("\nOs autovetores são:\n")
+                print(eigenvectors)
+                eigenvalues = np.diag(eigenvalues)
+                A = eigenvectors.dot(eigenvalues).dot(np.linalg.inv(eigenvectors)) #remonta A
+                print("\nA = PDP^-1, P = autovetores, D = matriz diagonal dos autovalores.\n")
+                print(A)
+                print("\n")
+                specie = flower
+        if bias != 1:
+            print("\n--- Com bias ---:")
+            bias = 1
+    bias = None
+
+    #Questão 3
+    print("\nQuestão 3: Decomposição SVD\n")
+    print("--- Sem bias ---:")
+    for execution in range(2):
+        for flower in data["Species"]:
+            if specie == flower:
+                continue
+            else:
+                objct.Separator(dataSet, flower, bias) 
+                A,b = objct.NormalEquation(objct.A, objct.b) 
+                print("Decomposição SVD da matriz da classe "+flower)
+                U,s,V = np.linalg.svd(A)
+                print("\nA matriz U:")
+                print(U)
+                print("\nOs valores singulares são:")
+                print(s)
+                print("\nA matriz V:")
+                print(V)
+                print("\n")
+                specie = flower
+        if bias != 1:
+            print("\n--- Com bias ---:")
+            bias = 1
+    bias = 1
+```

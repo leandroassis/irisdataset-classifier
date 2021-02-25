@@ -1,9 +1,6 @@
 import numpy as np 
 import pandas as pd
 
-'''
-To do Comentar e refatorar código
-'''
 class Iris_Classifier():
     def highest(self, a,b,c):
         highestValue = a
@@ -157,12 +154,6 @@ class Iris_Classifier():
 
     def trainAlgorithm(self, trainDataSet, bias=None, typeFlower=""):
         self.Separator(trainDataSet, typeFlower, bias, trainerMode=True, altResponse=False)
-        '''
-        # Utilizar o PLU + backsubstitution para resolver essa operação resultaria em uma perda de precisão devido aos arredondamentos durante o método
-        A,b = self.NormalEquation(self.A,self.b)
-        A, b = self.PLU(A,b)   
-        self.coefficients = self.backSubstitution(A,b)
-        '''
         self.coefficients = self.leastSquares(self.A, self.b)
     
     def OneVsAllAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet=0, bias = None):
@@ -233,7 +224,7 @@ class Iris_Classifier():
 
     def trainStepAlgorithm(self, trainDataSet, bias):
         self.Separator(trainDataSet, bias=bias, altResponse=True, trainerMode=True)
-        self.coefficients = self.leastSquares(self.A, self.b) #novamente utilizando mínimos quadrados para não perder eficiência
+        self.coefficients = self.leastSquares(self.A, self.b) 
    
     def StepFunctionAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet=0, bias=None): #Função classificadora utilizando step Function
         #self.trainStepAlgorithm("iris2.csv", bias) #treinando com 150 dados para obter 100% de acurácia
@@ -285,6 +276,7 @@ def run():
 
     print("Trabalho Final de Álgebra Linear")
     print("Grupo 8 - Leandro Assis, Paulo Victor Lima, Pedro Alonso, Victor Nunes")
+    print("!IMPORTANTE: Leia o README.md para explicações e avisos importantes")
 
     #Questão 1
     print("\nQuestão 1.1: Coeficientes para cada classe usando Mínimos Quadrados\n")
@@ -326,8 +318,8 @@ def run():
             if specie == flower:
                 continue
             else:
-                objct.Separator(dataSet, flower, bias, trainerMode=True, altResponse=False) #para incluir o bias basta modificar o valor de bias na declaração no top dessa função
-                A,b = objct.NormalEquation(objct.A, objct.b) #discarta-se o B pois o interesse é apenas fazer a decomposição de A
+                objct.Separator(dataSet, flower, bias, trainerMode=True, altResponse=False) 
+                A,b = objct.NormalEquation(objct.A, objct.b)
                 print("Decomposição Espectral da matriz A da classe "+flower)
                 print("\nA antes da decomposição: \n")
                 print(A)
@@ -355,8 +347,8 @@ def run():
             if specie == flower:
                 continue
             else:
-                objct.Separator(dataSet, flower, bias, trainerMode=True, altResponse=False) #para incluir o bias basta modificar o valor de bias na declaração no top dessa função
-                A,b = objct.NormalEquation(objct.A, objct.b) #discarta-se o B pois o interesse é apenas fazer a decomposição de A
+                objct.Separator(dataSet, flower, bias, trainerMode=True, altResponse=False) 
+                A,b = objct.NormalEquation(objct.A, objct.b) 
                 print("Decomposição SVD da matriz da classe "+flower)
                 U,s,V = np.linalg.svd(A)
                 print("\nA matriz U:")
