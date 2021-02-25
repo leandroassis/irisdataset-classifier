@@ -129,7 +129,7 @@ A para todas as classes (nessa implementação e na posterior)
          [6.1 3.  4.9 1.8]
          [6.4 2.8 5.6 2.1]]
 ```
-3. Utiliza a função Separator(declarando trainerMode e altReponse = True) para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com -1 nas linhas referentes à classe Iris-setosa, 0 nas refernetes à iris-versicolor e 2 nas referentes à iris-virgínica (método utilizado apenas no classificador StepFunction).
+3. Utiliza a função Separator(declarando trainerMode e altReponse = True) para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com -1 nas linhas referentes à classe Iris-setosa, 1 nas refernetes à iris-versicolor e 2 nas referentes à iris-virgínica (método utilizado apenas no classificador StepFunction).
 ```
 Ex:
 b para todas as classes:
