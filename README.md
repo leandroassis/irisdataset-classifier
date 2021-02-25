@@ -15,7 +15,7 @@
 
 Existem 3 possibilidades para separação das matrizes para cada classe:
 
-1. Utiliza a função Separator(sem declarar altResponse e trainerMode) para separar o dataset em matrizes A 15x4 (ou 15x5) com os dados referentes à cada classe e b formada por 15 linhas de 1.
+1. Utiliza a função Separator(sem declarar altResponse e trainerMode) para separar o dataset em matrizes A 15x4 (ou 15x5) com os dados referentes à cada classe e b formada por 15 linhas de 1. (--> Essa forma, apesar de muito similar a seguinte, retorna coeficientes que não resultam em classificações estáveis)
 ```
 EX: A para classe irís-setosa       b todos as classes (nessa implementação)
     A = [[5.8 4.  1.2 0.2]          b = [[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1]]
@@ -184,7 +184,17 @@ Escolhi usar a segunda alternativa para realizar todo o projeto pois foi a que o
 
 ### Algoritmos de classificação:
 
+Existem 2 algoritmos que fazem a classificação baseados nos valores passados para SLength, SWidth, PLength e PWidth. 
 
+1. One Vs All:
+Nesse algoritmo é utilizada a segunda forma de separação de dados descrita acima. A ideia é especializar três funções em detectar se a classe é ou não algo, ou seja, uma função especializada em Iris-setosa, outra em iris-versicolor e outra em iris-virginica. Cada função gera coeficientes diferentes (resolução do sistema linear Ax=b utilizando A e B descritos na forma 2 do tópico anterior), faz a operação dos valores de entrada por eles e retorna a chance daquele conjunto de pontos se enquadrar ou não na reta característica da classe. A função classificadora que retornar a maior chance têm-se como a classe correta.
+
+Note que o benefício desse algoritmo é perceber a incerteza da máquina sobre a classificação de alguns pontos. Essa incerteza é visível quando as 3 funções classificadoras retornam chances muito baixas.
+
+2. Algoritmo com Step Function:
+Nesse algoritmo é utilizada a última forma de separação de dados descrita acima. A ideia é gerar os coefientes (resolução do sistema Ax = b usando A e b do tópico acima) e passar todas as entradas por eles. A resposta passa por um função degrau, que verifica qual valor de classe a resposta mais se aproxima (os valores de classe são: -1->Setosa, 1->Versicolor 2->Virginica).
+
+Esse algoritmo, diferentemente do anterior, não consegue expressar suas incertezas em relação a classificação da amostra, apesar disso ele obteve um desempenho de 97,78% utilizando 45 dados para treinamento e chegou a 100% utilizando 150 dados para treinamento.
 
 ## Funcionamento:
 
@@ -211,3 +221,6 @@ Escolhi usar a segunda alternativa para realizar todo o projeto pois foi a que o
     - Passo 4: Repete os passos acima para cada classe com e sem bias(termo independente).
 
 - Questão 4:
+    - Passo 1: Chama as funções de cada algoritmo de classificação, que internamente treinam (geram coeficientes) para serem utilizados na classificação.
+    - Passo 2: Resolve o sistema Ax=b, sendo A a matriz com os dados de pétala e sépala passados.
+    - Passo 3: Apresenta a classificação.

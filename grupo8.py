@@ -4,6 +4,7 @@ import pandas as pd
 '''
 To do Comentar e refatorar código
 To do Classificador apontar casos de indecisão
+To do Revisar decomposição SVD
 To do Fazer Power Method
 '''
 class Iris_Classifier():
@@ -350,11 +351,13 @@ def run():
             else:
                 objct.Separator(dataSet, flower, bias, trainerMode=True, altResponse=False) #para incluir o bias basta modificar o valor de bias na declaração no top dessa função
                 A,b = objct.NormalEquation(objct.A, objct.b) #discarta-se o B pois o interesse é apenas fazer a decomposição de A
-                print("Decomposição SVD da matriz A da classe "+flower)
+                print("Decomposição SVD da matriz da classe "+flower)
                 U,s,V = np.linalg.svd(A)
-                print("A matriz U é ")
+                print("\nA matriz U:")
                 print(U)
+                print("\nOs valores singulares são:")
                 print(s)
+                print("\nA matriz V:")
                 print(V)
                 print("\n")
                 specie = flower
@@ -365,7 +368,7 @@ def run():
 
     #Questão 4
     print("\nQuestão 4: Classificando as amostras\n")
-    print("OBS: A primeira resposta é referente ao classificador Um contra Todos e a segunda ao Algoritmo com Step Function")
+    print("OBS: A primeira resposta é referente ao classificador Um contra Todos e a segunda ao Algoritmo com Step Function, que pode ser usada como gabarito")
     print("A-)")
     objct.OneVsAllAlgorithm(5,2.3,3.3,1,bias=bias)
     objct.StepFunctionAlgorithm(5,2.3,3.3,1,bias=bias)
