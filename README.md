@@ -2,6 +2,11 @@
 
 ## Final work of Linear Algebra II
 
+### Execução:
+Para obter as respostas de cada pergunta bastar executar:
+```
+    pip3 install numpy && pip3 install pandas && python3 grupo8.py
+```
 ### Objetivos:
 - Calcular os coeficientes de um sistema linear através dos Mínimos Quadrados e PLU+backsubstitution
 - Calcular a Decomposição SVD
