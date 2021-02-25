@@ -3,9 +3,6 @@ import pandas as pd
 
 '''
 To do Comentar e refatorar código
-To do Classificador apontar casos de indecisão
-To do Revisar decomposição SVD
-To do Fazer Power Method
 '''
 class Iris_Classifier():
     def highest(self, a,b,c):
@@ -188,13 +185,22 @@ class Iris_Classifier():
                 isVirginica = np.array([sLength, sWidth, pLength, pWidth]).dot(VirginicaClassifiers)
 
             highestCoef = self.highest(isSetosa, isVersicolor, isVirginica)
-            if isSetosa == highestCoef:
-                response = "Iris-setosa"
+            print("\nAlgoritmo OneVsAll:")
+            if highestCoef*100 <= 55:
+                print("\nHá uma indecisão sobre a classificação.")
+                print("As probabilidades são:")
+                print(str(round(isSetosa[0]*100))+"% de ser Iris-setosa.")
+                print(str(round(isVersicolor[0]*100))+"% de ser Iris-versicolor.")
+                print(str(round(isVirginica[0]*100))+"% de ser Iris-virginica.\n")
+            elif isSetosa == highestCoef:
+                response = "Iris-setosa."
+                print("A flor é uma "+response)
             elif isVirginica == highestCoef:
-                response = "Iris-virginica"
+                response = "Iris-virginica."
+                print("A flor é uma "+response)
             elif isVersicolor == highestCoef:
-                response = "Iris-versicolor"
-            print("A flor é uma "+response)
+                response = "Iris-versicolor."
+                print("A flor é uma "+response)
         else:
             data = pd.read_csv(dataSet)
             sepalLength = data["SepalLengthCm"]
@@ -237,7 +243,7 @@ class Iris_Classifier():
                 classification = np.array([sLength, sWidth, pLength, pWidth, bias]).dot(self.coefficients)[0]
             else:
                 classification = np.array([sLength, sWidth, pLength, pWidth]).dot(self.coefficients)[0]
-
+            print("\nAlgoritmo StepFunction:")
             if round(classification) <= -1:
                 response = "Iris-setosa"
             elif round(classification) ==1:
@@ -364,11 +370,10 @@ def run():
         if bias != 1:
             print("\n--- Com bias ---:")
             bias = 1
-    bias = None
+    bias = 1
 
     #Questão 4
     print("\nQuestão 4: Classificando as amostras\n")
-    print("OBS: A primeira resposta é referente ao classificador Um contra Todos e a segunda ao Algoritmo com Step Function, que pode ser usada como gabarito")
     print("A-)")
     objct.OneVsAllAlgorithm(5,2.3,3.3,1,bias=bias)
     objct.StepFunctionAlgorithm(5,2.3,3.3,1,bias=bias)
