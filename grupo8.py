@@ -329,8 +329,8 @@ def run():
                 print("\nOs autovetores são:\n")
                 print(eigenvectors)
                 eigenvalues = np.diag(eigenvalues)
-                A = eigenvectors.dot(eigenvalues).dot(np.linalg.inv(eigenvectors)) #remonta A
-                print("\nA = PDP^-1, P = autovetores, D = matriz diagonal dos autovalores.\n")
+                A = eigenvectors.dot(eigenvalues).dot(eigenvectors.transpose()) #remonta A
+                print("\nA = PDP^T, P = autovetores, D = matriz diagonal dos autovalores.\n")
                 print(A)
                 print("\n")
                 specie = flower
