@@ -227,8 +227,8 @@ class Iris_Classifier():
         self.coefficients = self.leastSquares(self.A, self.b) 
    
     def StepFunctionAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet=0, bias=None): #Função classificadora utilizando step Function
-        self.trainStepAlgorithm("iris2.csv", bias) #treinando com 150 dados para obter 100% de acurácia
-        #self.trainStepAlgorithm("dados_08.csv", bias) #treinando com 45 dados para obter 97.8% de acurácia
+        #self.trainStepAlgorithm("iris2.csv", bias) #treinando com 150 dados para obter 100% de acurácia
+        self.trainStepAlgorithm("dados_08.csv", bias) #treinando com 45 dados para obter 97.8% de acurácia
         if dataSet == 0: 
             if bias != None:
                 classification = np.array([sLength, sWidth, pLength, pWidth, bias]).dot(self.coefficients)[0]
