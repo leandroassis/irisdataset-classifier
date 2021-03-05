@@ -1,3 +1,10 @@
+'''
+    Trabalho de Álgebra Linear 2
+    Grupo: Leandro Assis, Paulo Victor Lima, Pedro Alonso e Victor Nunes.
+
+    Repositório no GitHub: https://github.com/leandroassis/irisdataset-classifier
+'''
+
 import numpy as np 
 import pandas as pd
 
