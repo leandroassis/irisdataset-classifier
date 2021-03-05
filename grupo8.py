@@ -284,18 +284,6 @@ def run():
         if specie == flower:
             continue
         else:
-            objct.Separator(dataSet, flower,bias, trainerMode=True, altResponse=False) #para incluir o bias basta modificar o valor de bias na declaração no top dessa função
-            print("Coeficientes da classe "+flower+".")
-            print(objct.leastSquares(objct.A, objct.b))
-            print("\n")
-            specie = flower
-
-    #Questão 1
-    print("\nQuestão 1.1: Coeficientes para cada classe usando Mínimos Quadrados\n")
-    for flower in data["Species"]:
-        if specie == flower:
-            continue
-        else:
             objct.Separator(dataSet, flower,bias) #para incluir o bias basta modificar o valor de bias na declaração no top dessa função
             print("Coeficientes da classe "+flower+".")
             print(objct.leastSquares(objct.A, objct.b))
@@ -331,7 +319,7 @@ def run():
                 continue
             else:
                 objct.Separator(dataSet, flower, bias) 
-                A,b = objct.NormalEquation(objct.A, objct.b) 
+                A,b = objct.NormalEquation(objct.A, objct.b)
                 print("Decomposição Espectral da matriz A da classe "+flower)
                 print("\nA antes da decomposição: \n")
                 print(A)
@@ -341,8 +329,8 @@ def run():
                 print("\nOs autovetores são:\n")
                 print(eigenvectors)
                 eigenvalues = np.diag(eigenvalues)
-                A = eigenvectors.dot(eigenvalues).dot(np.linalg.inv(eigenvectors)) #remonta A
-                print("\nA = PDP^-1, P = autovetores, D = matriz diagonal dos autovalores.\n")
+                A = eigenvectors.dot(eigenvalues).dot(eigenvectors.transpose()) #remonta A
+                print("\nA = PDP^T, P = autovetores, D = matriz diagonal dos autovalores.\n")
                 print(A)
                 print("\n")
                 specie = flower
@@ -359,7 +347,7 @@ def run():
             if specie == flower:
                 continue
             else:
-                objct.Separator(dataSet, flower, bias) 
+                objct.Separator(dataSet, flower) 
                 A,b = objct.NormalEquation(objct.A, objct.b) 
                 print("Decomposição SVD da matriz da classe "+flower)
                 U,s,V = np.linalg.svd(A)
