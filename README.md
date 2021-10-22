@@ -5,11 +5,11 @@
 # Usage
 
 To get the answer of each question you should just:
-    1. Clone the repository (requires git installed "sudo apt-get install git-all"):
+1. Clone the repository (requires git installed "sudo apt-get install git-all"):
 ```
     git clone https://github.com/leandroassis/irisdataset-classifier.git
 ```
-    2. Execute the follow command line into irisdataset-classifier folder:
+2. Execute the follow command line into irisdataset-classifier folder:
 ```
     pip3 install numpy && pip3 install pandas && clear && python3 grupo8.py
 ```
@@ -28,7 +28,7 @@ To get the answer of each question you should just:
 
 There are three possibilities to detach the each class matrices:
 
-    1. Using the Separator functions (without declaring altResponse and trainerMode) to detach the dataset into matrices A 15x4 (or 15x5 if using bias) with each flower class data, e matrices b 15x1. (OBS: This possibility, although very similar to the following, return coefficients that result in stable classifications)
+1. Using the Separator functions (without declaring altResponse and trainerMode) to detach the dataset into matrices A 15x4 (or 15x5 if using bias) with each flower class data, e matrices b 15x1. (OBS: This possibility, although very similar to the following, return coefficients that result in stable classifications)
 ```
 EX: A to iris setosa class          b to all classes
     A = [[5.8 4.  1.2 0.2]          b = [[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1]]
@@ -47,7 +47,7 @@ EX: A to iris setosa class          b to all classes
          [5.2 3.5 1.5 0.2]
          [5.2 3.4 1.4 0.2]] 
 ```
-    2. Using the Separator functions (declaring altResponse = False and trainerMode = True) to detach the dataset into matrices A 45x4 (or 45x5 if using bias) with all data of each class mixed, and b made of 45 lines with 1 in the lines referents to the class being analyzed and 0 in the others else. 
+2. Using the Separator functions (declaring altResponse = False and trainerMode = True) to detach the dataset into matrices A 45x4 (or 45x5 if using bias) with all data of each class mixed, and b made of 45 lines with 1 in the lines referents to the class being analyzed and 0 in the others else. 
 ``` 
 Ex:
 b to Iris-versicolor
@@ -142,7 +142,7 @@ A to all classes
          [6.1 3.  4.9 1.8]
          [6.4 2.8 5.6 2.1]]
 ```
-    3. Using the Separator function (declaring trainderMode and altResponse = True) to detach the dataset into matrices A 45x4 (or 45x5 if using bias) with data of each class and b made of 45 lines with -1 on lines referents to Iris-Setosa class, 1 on lines referents to Iris-Versicolor and 2 on lines referents to Iris-Virginica (method used only in StepFunction Classifier Algorithm).
+3. Using the Separator function (declaring trainderMode and altResponse = True) to detach the dataset into matrices A 45x4 (or 45x5 if using bias) with data of each class and b made of 45 lines with -1 on lines referents to Iris-Setosa class, 1 on lines referents to Iris-Versicolor and 2 on lines referents to Iris-Virginica (method used only in StepFunction Classifier Algorithm).
 ```
 Ex:
 b to all classes:
