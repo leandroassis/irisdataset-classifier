@@ -2,8 +2,6 @@
 ## Made by: Leandro Assis, Paulo Victor Lima, Pedro Alonso e Victor Nunes.
 ## Date: 05/03/21
 
-# Introduction
-
 # Usage
 
 To get the answer of each question you should just:
