@@ -1,8 +1,11 @@
 '''
+ptBR:
     Trabalho de Álgebra Linear 2
     Grupo: Leandro Assis, Paulo Victor Lima, Pedro Alonso e Victor Nunes.
 
-    Repositório no GitHub: https://github.com/leandroassis/irisdataset-classifier
+enUS:
+    Linear Algebra 2 Work
+    Group: Leandro Assis, Paulo Victor Lima, Pedro Alonso e Victor Nunes
 '''
 
 import numpy as np 
@@ -234,7 +237,7 @@ class Iris_Classifier():
         self.coefficients = self.leastSquares(self.A, self.b) 
    
     def StepFunctionAlgorithm(self, sLength=0, sWidth=0, pLength=0, pWidth=0, dataSet=0, bias=None): #Função classificadora utilizando step Function
-        #self.trainStepAlgorithm("iris2.csv", bias) #treinando com 150 dados para obter 100% de acurácia
+        #self.trainStepAlgorithm("iris_fulldataset.csv", bias) #treinando com 150 dados para obter 100% de acurácia
         self.trainStepAlgorithm("dados_08.csv", bias) #treinando com 45 dados para obter 97.8% de acurácia
         if dataSet == 0: 
             if bias != None:

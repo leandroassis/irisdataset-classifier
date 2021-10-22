@@ -1,33 +1,38 @@
-# irisdataset-classifier
+# **irisdataset-classifier** - *Linear Algebra II Coursework*
+## Made by: Leandro Assis, Paulo Victor Lima, Pedro Alonso e Victor Nunes.
+## Date: 05/03/21
 
-## Final work of Linear Algebra II
+# Introduction
 
-### Execução:
-Para obter as respostas de cada pergunta basta:
-- Clonar o repositório (requer git instalado "sudo apt-get install git-all"):
+# Usage
+
+To get the answer of each question you should just:
+    1. Clone the repository (requires git installed "sudo apt-get install git-all"):
 ```
     git clone https://github.com/leandroassis/irisdataset-classifier.git
 ```
-- Executar:
+    2. Execute the follow command line into irisdataset-classifier folder:
 ```
     pip3 install numpy && pip3 install pandas && clear && python3 grupo8.py
 ```
-### Objetivos:
-- Calcular os coeficientes de um sistema linear através dos Mínimos Quadrados e PLU+backsubstitution
-- Calcular a Decomposição SVD
-- Calcular a Decomposição Espectral
-- Criar algoritmo de classificação com dois algoritmos distintos
+
+# Goals:
+
+* Calculate the coefficients of a linear system through Least Squares Method and PLU+backsubstitution.
+* Calculate the Singular Values Decomposition (SVD)
+* Calculate the Espectral Descomposition
+* Create an IA classifier algorithm with two different algorithms (One vs All and Step function)
 
 
-## Importante:
+# Important:
 
-### Separação de cada classe: 
+## Each flower class separation: 
 
-Existem 3 possibilidades para separação das matrizes para cada classe:
+There are three possibilities to detach the each class matrices:
 
-1. Utiliza a função Separator(sem declarar altResponse e trainerMode) para separar o dataset em matrizes A 15x4 (ou 15x5) com os dados referentes à cada classe e b formada por 15 linhas de 1. (--> Essa forma, apesar de muito similar a seguinte, retorna coeficientes que não resultam em classificações estáveis)
+    1. Using the Separator functions (without declaring altResponse and trainerMode) to detach the dataset into matrices A 15x4 (or 15x5 if using bias) with each flower class data, e matrices b 15x1. (OBS: This possibility, although very similar to the following, return coefficients that result in stable classifications)
 ```
-EX: A para classe irís-setosa       b todos as classes (nessa implementação)
+EX: A to iris setosa class          b to all classes
     A = [[5.8 4.  1.2 0.2]          b = [[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1]]
          [5.7 4.4 1.5 0.4]
          [5.4 3.9 1.3 0.4]
@@ -44,10 +49,10 @@ EX: A para classe irís-setosa       b todos as classes (nessa implementação)
          [5.2 3.5 1.5 0.2]
          [5.2 3.4 1.4 0.2]] 
 ```
-2. Utiliza a função Separator (declarando altResponse = False e trainerMode = True) para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com 1 nas linhas referentes a classe em questão e 0 nas outras linhas. 
+    2. Using the Separator functions (declaring altResponse = False and trainerMode = True) to detach the dataset into matrices A 45x4 (or 45x5 if using bias) with all data of each class mixed, and b made of 45 lines with 1 in the lines referents to the class being analyzed and 0 in the others else. 
 ``` 
 Ex:
-b para Iris-versicolor
+b to Iris-versicolor
     b = [[0]
          [0]
          [0]
@@ -92,7 +97,7 @@ b para Iris-versicolor
          [0]
          [0]
          [0]]
-A para todas as classes (nessa implementação e na posterior)
+A to all classes
     A = [[5.8 4.  1.2 0.2]  
          [5.7 4.4 1.5 0.4]
          [5.4 3.9 1.3 0.4]
@@ -139,10 +144,10 @@ A para todas as classes (nessa implementação e na posterior)
          [6.1 3.  4.9 1.8]
          [6.4 2.8 5.6 2.1]]
 ```
-3. Utiliza a função Separator(declarando trainerMode e altReponse = True) para separar o dataset em matrizes A 45x4 (ou 45x5) com os dados referentes à cada classe e b formada por 45 linhas com -1 nas linhas referentes à classe Iris-setosa, 1 nas refernetes à iris-versicolor e 2 nas referentes à iris-virgínica (método utilizado apenas no classificador StepFunction).
+    3. Using the Separator function (declaring trainderMode and altResponse = True) to detach the dataset into matrices A 45x4 (or 45x5 if using bias) with data of each class and b made of 45 lines with -1 on lines referents to Iris-Setosa class, 1 on lines referents to Iris-Versicolor and 2 on lines referents to Iris-Virginica (method used only in StepFunction Classifier Algorithm).
 ```
 Ex:
-b para todas as classes:
+b to all classes:
 b = [[-1]
      [-1]
      [-1]
@@ -190,23 +195,24 @@ b = [[-1]
      [ 2]]
 ```
 
-Escolhi usar a segunda alternativa para realizar todo o projeto pois foi a que obteve o melhor desempenho.
+I choosed use the second possibilty to complete this coursework because it had the better results.
 
-### Algoritmos de classificação:
+## Classifier Algorithms:
 
-Existem 2 algoritmos que fazem a classificação baseados nos valores passados para SLength, SWidth, PLength e PWidth. 
+There are two classifier algorithms based on values passed to SLength, SWidth, PLength and PWidth. 
 
 1. One Vs All:
-Nesse algoritmo é utilizada a segunda forma de separação de dados descrita acima. A ideia é especializar três funções em detectar se a classe é ou não algo, ou seja, uma função especializada em Iris-setosa, outra em iris-versicolor e outra em iris-virginica. Cada função gera coeficientes diferentes (resolução do sistema linear Ax=b utilizando A e B descritos na forma 2 do tópico anterior), faz a operação dos valores de entrada por eles e retorna a chance daquele conjunto de pontos se enquadrar ou não na reta característica da classe. A função classificadora que retornar a maior chance têm-se como a classe correta.
+In this algorithm is used the second possibility described above. The idea is to master three functions (one for each class) to calculate the probability of the flower with SLength, SWidth, PLength, and PWidth measures are from the respective class. In other words, there is one function specialized in Iris-Setosa, another one in Iris-Versicolor, and one last in Iris-Virginica. The function to return the highest probability is the flower classification.
 
-Note que o benefício desse algoritmo é perceber a incerteza da máquina sobre a classificação de alguns pontos. Essa incerteza é visível quando as 3 funções classificadoras retornam chances muito baixas.
+Note that the benefit of this algorithm is shown the uncertainty in some classifications. That uncertainty is visible when the three function returns very low probabilities.
 
-2. Algoritmo com Step Function:
-Nesse algoritmo é utilizada a última forma de separação de dados descrita acima. A ideia é gerar os coefientes (resolução do sistema Ax = b usando A e b do tópico acima) e passar todas as entradas por eles. A resposta passa por um função degrau, que verifica qual valor de classe a resposta mais se aproxima (os valores de classe são: -1->Setosa, 1->Versicolor 2->Virginica).
+2. Step Function Algorithm:
+In this algorithm is used the last possibility described above. The idea is generate the coefficients (results of solving de system Ax = b using A and b as described in the previous topic) and pass all the inputs for it. This operation result goes through a step function that check what predefined class value (-1 to Setosas, 1 to Versicolor and 2 to Virginica) it's closer.
 
-Esse algoritmo, diferentemente do anterior, não consegue expressar suas incertezas em relação a classificação da amostra, apesar disso ele obteve um desempenho de 97,78% utilizando 45 dados para treinamento e chegou a 100% utilizando 150 dados para treinamento.
+This algorithm, in a different way from the previous, can't show uncertainty, although it had a performance of 97,78% using 45 dataset lenght to training and 100% using 130 dataset lenght to training.
 
-## Funcionamento:
+## Operation:
+#### In portuguese (ptBR) because i'm too tired to translate it. Sorry :p
 
 - Questão 1.1:
     - Passo 1: Utiliza a função Separator para separar o dataset em matrizes A 15x4 (ou 15x5) com os dados referentes à cada classe e b formada por 15 linhas com 1 nas linhas referentes a classe em questão e 0 nas outras linhas.
